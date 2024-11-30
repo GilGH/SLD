@@ -20,10 +20,11 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
     logo:{
-        width:80,
-        height:80,
+        width:180,
+        height:180,
         marginTop:10,
-        marginBottom:10
+        marginBottom:10,
+        borderRadius:100
     },
     view:{
         flex:1,
