@@ -7,14 +7,7 @@ export default function Principal() {
   const navigation = useNavigation();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Pantalla Principal</Text>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Text style={styles.menuButton}>☰</Text>
-        </TouchableOpacity>
-      </View>
-      
+    <SafeAreaView style={styles.container}>      
       <View style={styles.content}>
         <Text style={styles.contentText}>Bienvenido a la aplicación!</Text>
       </View>
@@ -26,13 +19,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',  // Color de fondo general
-    padding: 20,
+    marginTop:20
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 15,
+    paddingHorizontal:10,
     backgroundColor: '#007BFF',  // Color de fondo del encabezado
     borderRadius: 10,
   },
