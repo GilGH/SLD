@@ -1,61 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged} from "firebase/auth";
-import app from './src/utils/firebase';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import Auth from './src/components/Auth';
+import Principal from './src/components/Principal';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState, useEffect } from 'react';
+import app from './src/utils/firebase';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   const [user, setUser] = useState(undefined);
-
   const auth = getAuth(app);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // El usuario está autenticado
         setUser(true);
       } else {
-        // El usuario no está autenticado
         setUser(false);
       }
     });
   }, []);
 
-
-
   if (user === undefined) return null;
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-
-          // Si no está autenticado, muestra la pantalla de inicio de sesión
-          <Auth />
-        
-      </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {user ? (
+          <Stack.Screen name="Principal" component={Principal} />
+        ) : (
+          <Stack.Screen name="Auth" component={Auth} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    paddingVertical: 20,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#fff',
-  },
-  headerText: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  body: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-});
