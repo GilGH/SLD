@@ -10,6 +10,9 @@ import RegistroEquipos from './src/components/RegistroEquipos';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useState, useEffect } from 'react';
 import app from './src/utils/firebase';
+import DetalleEquipo from './src/components/DetalleEquipo';
+import RegistroJugador from './src/components/RegistroJugador';
+import DetalleJugador from './src/components/DetalleJugador';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -69,10 +72,39 @@ export default function App() {
       headerStyle: { backgroundColor: "#1E90FF" },
       headerTintColor: "#fff",
       headerTitleStyle: { fontWeight: "bold" },
-    }}
-  />
+    }}/>
+  <Stack.Screen 
+    name="DetalleEquipo" 
+    component={DetalleEquipo}
+    options={{
+      title: "Detalle del Equipo",
+      headerStyle: { backgroundColor: "#1E90FF" },
+      headerTintColor: "#fff",
+      headerTitleStyle: { fontWeight: "bold" },
+    }}/>
   <Drawer.Screen name="RegistroEquipos" component={RegistroEquipos} />
+  <Stack.Screen 
+    name="RegistroJugador" 
+    component={RegistroJugador}
+    options={{
+      title: "Registrar Jugador",
+      headerStyle: { backgroundColor: "#1E90FF" },
+      headerTintColor: "#fff",
+      headerTitleStyle: { fontWeight: "bold" },
+    }}/>
+    <Stack.Screen 
+    name="DetalleJugador" 
+    component={DetalleJugador}
+    options={{
+      title: "Detalle del Jugador",
+      headerStyle: { backgroundColor: "#1E90FF" },
+      headerTintColor: "#fff",
+      headerTitleStyle: { fontWeight: "bold" },
+    }}/>
+
+
 </Drawer.Navigator>
+
 
   );
 
