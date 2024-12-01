@@ -7,6 +7,7 @@ const db = getFirestore(app);
 
 export default function VerLigas({ navigation }) {
   const [ligas, setLigas] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchLigas = async () => {
@@ -16,16 +17,18 @@ export default function VerLigas({ navigation }) {
         setLigas(ligasData);
       } catch (error) {
         console.error("Error al obtener ligas:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
-
+  
     fetchLigas();
   }, []);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.ligaItem} 
-      onPress={() => navigation.navigate('RegistroEquipos', { ligaId: item.id })}
+      onPress={() => navigation.navigate('Detalle de la Liga', { ligaId: item.id, nombre: item.nombre })}
     >
       <Text style={styles.ligaNombre}>{item.nombre}</Text>
       <Text style={styles.ligaDescripcion}>{item.descripcion}</Text>
@@ -35,7 +38,9 @@ export default function VerLigas({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ligas Disponibles</Text>
-      {ligas.length === 0 ? (
+      {isLoading ? (
+        <Text>Cargando...</Text>
+      ) : ligas.length === 0 ? (
         <Text>No hay ligas registradas.</Text>
       ) : (
         <FlatList

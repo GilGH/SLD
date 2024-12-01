@@ -5,6 +5,8 @@ import Auth from './src/components/Auth';
 import Principal from './src/components/Principal';
 import CrearLiga from './src/components/CrearLiga';
 import VerLigas from './src/components/VerLigas';
+import DetalleLiga from './src/components/DetalleLiga';
+import RegistroEquipos from './src/components/RegistroEquipos';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useState, useEffect } from 'react';
 import app from './src/utils/firebase';
@@ -13,14 +15,16 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export default function App() {
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState(null);
   const auth = getAuth(app);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setUser(user ? true : false);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
     });
+    return () => unsubscribe();
   }, []);
+  
 
   if (user === undefined) return null;
 
@@ -35,8 +39,8 @@ export default function App() {
   const CustomDrawerContent = (props) => (
     <DrawerContentScrollView {...props}>
       <DrawerItem
-        label="Ver Ligas"
-        onPress={() => props.navigation.navigate('Ver Ligas')}
+        label="Ligas"
+        onPress={() => props.navigation.navigate('Ligas')}
       />
       <DrawerItem
         label="Crear Liga"
@@ -53,13 +57,23 @@ export default function App() {
 
   // Drawer Navigator
   const DrawerNavigator = () => (
-    <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-    >
-      <Drawer.Screen name="Principal" component={Principal} />
-      <Drawer.Screen name="Crear Liga" component={CrearLiga} />
-      <Drawer.Screen name="Ver Ligas" component={VerLigas} />
-    </Drawer.Navigator>
+    <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
+  <Drawer.Screen name="Principal" component={Principal} />
+  <Drawer.Screen name="Crear Liga" component={CrearLiga} />
+  <Drawer.Screen name="Ligas" component={VerLigas} />
+  <Stack.Screen 
+    name="Detalle de la Liga" 
+    component={DetalleLiga}
+    options={{
+      title: "Detalle de la Liga",
+      headerStyle: { backgroundColor: "#1E90FF" },
+      headerTintColor: "#fff",
+      headerTitleStyle: { fontWeight: "bold" },
+    }}
+  />
+  <Drawer.Screen name="RegistroEquipos" component={RegistroEquipos} />
+</Drawer.Navigator>
+
   );
 
   return (
@@ -73,6 +87,7 @@ export default function App() {
       )}
     </NavigationContainer>
   );
+  
 }
 
 
