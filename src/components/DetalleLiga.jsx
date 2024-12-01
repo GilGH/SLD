@@ -1,4 +1,3 @@
-// DetalleLiga.js
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, FlatList, Button, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
