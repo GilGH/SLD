@@ -1,17 +1,33 @@
-import { StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button, Alert, Image, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import app from "../utils/firebase";
+import * as ImagePicker from 'expo-image-picker'; // Importamos ImagePicker
+import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons'; // Puedes instalarlo: `expo install @expo/vector-icons`
 
 export default function CrearLiga() {
   const [nombreLiga, setNombreLiga] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [logo, setLogo] = useState(null); // Para almacenar la URI de la imagen
   const [cargando, setCargando] = useState(false);
 
   const navigation = useNavigation();
   const db = getFirestore(app);
+
+  const seleccionarImagen = async () => {
+    const resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!resultado.canceled) {
+      setLogo(resultado.assets[0].uri); // Guarda la URI seleccionada
+    } else {
+      Alert.alert("Error", "No se seleccionó ninguna imagen.");
+    }
+  };
 
   const handleCrearLiga = async () => {
     if (!nombreLiga || !descripcion) {
@@ -24,12 +40,14 @@ export default function CrearLiga() {
       await addDoc(collection(db, "ligas"), {
         nombre: nombreLiga,
         descripcion,
+        logo, // Guardamos la URI de la imagen seleccionada
         fechaCreacion: new Date().toISOString(),
       });
       Alert.alert("Éxito", "Liga creada correctamente");
       setNombreLiga('');
       setDescripcion('');
-      navigation.goBack(); // Vuelve automáticamente tras crear la liga
+      setLogo(null);
+      navigation.goBack(); 
     } catch (error) {
       Alert.alert("Error", "No se pudo crear la liga: " + error.message);
     } finally {
@@ -39,6 +57,12 @@ export default function CrearLiga() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="black" />
+      </TouchableOpacity>
+
+      <Text style={styles.title}>Crear Nueva Liga</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Nombre de la Liga"
@@ -52,6 +76,16 @@ export default function CrearLiga() {
         value={descripcion}
         onChangeText={setDescripcion}
         multiline
+      />
+
+      {logo && (
+        <Image source={{ uri: logo }} style={styles.logoPreview} />
+      )}
+
+      <Button style={styles.btnLogo}
+        title="Seleccionar Logo"
+        onPress={seleccionarImagen}
+        color="#1E90FF"
       />
 
       <Button
@@ -69,7 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#fff",
-    marginTop:10,
+    marginTop: 10,
   },
   backButton: {
     position: "absolute",
@@ -95,5 +129,18 @@ const styles = StyleSheet.create({
   textArea: {
     height: 80,
   },
+  logoPreview: {
+    width: 100,
+    height: 100,
+    resizeMode: "cover",
+    alignSelf: "center",
+    marginVertical: 10,
+    borderRadius: 10,
+  },
+  btnLogo:{
+
+  }
 });
+
+
 

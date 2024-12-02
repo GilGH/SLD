@@ -44,6 +44,10 @@ export default function App() {
   const CustomDrawerContent = (props) => (
     <DrawerContentScrollView {...props}>
       <DrawerItem
+        label="Principal"
+        onPress={() => props.navigation.navigate('Principal')}
+      />
+      <DrawerItem
         label="Ligas"
         onPress={() => props.navigation.navigate('Ligas')}
       />

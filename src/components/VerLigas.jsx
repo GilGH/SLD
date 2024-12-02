@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity } from 'react-native';
+import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import app from '../utils/firebase';
 
 const db = getFirestore(app);
@@ -10,28 +10,36 @@ export default function VerLigas({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLigas = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "ligas"));
-        const ligasData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Listener en tiempo real para las ligas
+    const unsubscribe = onSnapshot(
+      collection(db, "ligas"),
+      (querySnapshot) => {
+        const ligasData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
         setLigas(ligasData);
-      } catch (error) {
+        setIsLoading(false);
+      },
+      (error) => {
         console.error("Error al obtener ligas:", error);
-      } finally {
         setIsLoading(false);
       }
-    };
-  
-    fetchLigas();
+    );
+
+    return () => unsubscribe();
   }, []);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.ligaItem} 
+    <TouchableOpacity
+      style={styles.ligaItem}
       onPress={() => navigation.navigate('Detalle de la Liga', { ligaId: item.id, nombre: item.nombre })}
     >
-      <Text style={styles.ligaNombre}>{item.nombre}</Text>
-      <Text style={styles.ligaDescripcion}>{item.descripcion}</Text>
+      {item.logo && <Image source={{ uri: item.logo }} style={styles.logo} />}
+      <View style={styles.ligaInfo}>
+        <Text style={styles.ligaNombre}>{item.nombre}</Text>
+        <Text style={styles.ligaDescripcion}>{item.descripcion}</Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -65,10 +73,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   ligaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 15,
     backgroundColor: '#f5f5f5',
     borderRadius: 5,
     marginBottom: 10,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  ligaInfo: {
+    flex: 1,
   },
   ligaNombre: {
     fontSize: 18,
