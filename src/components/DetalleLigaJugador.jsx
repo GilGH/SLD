@@ -103,12 +103,7 @@ export default function DetalleLiga({ route, navigation }) {
         />
       )}
 
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate("RegistroEquipos", { ligaId })}
-      >
-        <Text style={styles.addButtonText}>Agregar Equipo</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 }
