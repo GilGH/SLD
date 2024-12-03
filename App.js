@@ -97,27 +97,100 @@ export default function App() {
     </Drawer.Navigator>
   );
 
+  // Stack para jugadores
   const PlayerStack = () => (
     <Stack.Navigator>
       <Stack.Screen name="VistaJugador" component={VistaJugador} />
     </Stack.Navigator>
   );
 
+  // Stack para administradores
+  const AdminStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Drawer"
+        component={DrawerNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Detalle de la Liga"
+        component={DetalleLiga}
+        options={{
+          title: "Detalle de la Liga",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="DetalleEquipo"
+        component={DetalleEquipo}
+        options={{
+          title: "Detalle del Equipo",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="RegistroJugador"
+        component={RegistroJugador}
+        options={{
+          title: "Registrar Jugador",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="DetalleJugador"
+        component={DetalleJugador}
+        options={{
+          title: "Detalle del Jugador",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="RegistroEquipos"
+        component={RegistroEquipos}
+        options={{
+          title: "Registrar Equipos",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="GenerarEncuentro"
+        component={GenerarEncuentro} // Agregar la nueva pantalla
+        options={{
+          title: "Generar Encuentro",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+    </Stack.Navigator>
+  );
+
+  // Definir qué stack cargar dependiendo del rol del usuario
   const getNavigationStack = () => {
     switch (role) {
       case "admin":
-        return <DrawerNavigator />;
+        return <AdminStack />;  // Stack para admin
       case "jugador":
-        return <PlayerStack />;
+        return <PlayerStack />; // Stack para jugador
       default:
-        return <DrawerNavigator />;
+        return <AdminStack />;  // Default a admin si el rol no está definido
     }
   };
 
   return (
     <NavigationContainer>
       {user ? (
-        getNavigationStack()
+        getNavigationStack() // Cargar stack según rol
       ) : (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Auth" component={Auth} />
@@ -126,4 +199,5 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
 
