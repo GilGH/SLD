@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import app from './src/utils/firebase';
 
 // Componentes
@@ -16,7 +17,8 @@ import DetalleEquipo from './src/components/DetalleEquipo';
 import RegistroJugador from './src/components/RegistroJugador';
 import DetalleJugador from './src/components/DetalleJugador';
 import EncuentrosForm from './src/components/EncuentrosForm';
-import GenerarEncuentro from './src/components/GenerarEncuentro'; // Importar el nuevo formulario
+import GenerarEncuentro from './src/components/GenerarEncuentro';
+import VistaJugador from './src/components/VistaJugador';
 
 // Creación de navegadores
 const Stack = createStackNavigator();
@@ -24,11 +26,27 @@ const Drawer = createDrawerNavigator();
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null); // Para el rol del usuario
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUser(user);
+        // Obtener rol del usuario desde Firestore
+        const userRef = doc(db, "users", user.uid); // Cambia "users" según tu colección
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          setRole(userDoc.data().role); // Suponiendo que el rol está en el campo `role`
+        } else {
+          console.error("No se encontró el documento del usuario");
+          setRole(null);
+        }
+      } else {
+        setUser(null);
+        setRole(null);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -37,7 +55,10 @@ export default function App() {
 
   const handleLogout = () => {
     signOut(auth)
-      .then(() => setUser(false))
+      .then(() => {
+        setUser(null);
+        setRole(null);
+      })
       .catch((error) => console.error("Error al cerrar sesión", error));
   };
 
@@ -76,80 +97,27 @@ export default function App() {
     </Drawer.Navigator>
   );
 
-  const AppStack = () => (
+  const PlayerStack = () => (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Drawer"
-        component={DrawerNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Detalle de la Liga"
-        component={DetalleLiga}
-        options={{
-          title: "Detalle de la Liga",
-          headerStyle: { backgroundColor: "#1E90FF" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      />
-      <Stack.Screen
-        name="DetalleEquipo"
-        component={DetalleEquipo}
-        options={{
-          title: "Detalle del Equipo",
-          headerStyle: { backgroundColor: "#1E90FF" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      />
-      <Stack.Screen
-        name="RegistroJugador"
-        component={RegistroJugador}
-        options={{
-          title: "Registrar Jugador",
-          headerStyle: { backgroundColor: "#1E90FF" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      />
-      <Stack.Screen
-        name="DetalleJugador"
-        component={DetalleJugador}
-        options={{
-          title: "Detalle del Jugador",
-          headerStyle: { backgroundColor: "#1E90FF" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      />
-      <Stack.Screen
-        name="RegistroEquipos"
-        component={RegistroEquipos}
-        options={{
-          title: "Registrar Equipos",
-          headerStyle: { backgroundColor: "#1E90FF" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      />
-      <Stack.Screen
-        name="GenerarEncuentro"
-        component={GenerarEncuentro} // Agregar la nueva pantalla
-        options={{
-          title: "Generar Encuentro",
-          headerStyle: { backgroundColor: "#1E90FF" },
-          headerTintColor: "#fff",
-          headerTitleStyle: { fontWeight: "bold" },
-        }}
-      />
+      <Stack.Screen name="VistaJugador" component={VistaJugador} />
     </Stack.Navigator>
   );
+
+  const getNavigationStack = () => {
+    switch (role) {
+      case "admin":
+        return <DrawerNavigator />;
+      case "jugador":
+        return <PlayerStack />;
+      default:
+        return <DrawerNavigator />;
+    }
+  };
 
   return (
     <NavigationContainer>
       {user ? (
-        <AppStack />
+        getNavigationStack()
       ) : (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Auth" component={Auth} />
@@ -158,3 +126,4 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
