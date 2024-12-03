@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Button, SafeAreaView, TouchableOpacity,Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LogoutButton from './LogoutButton';
+
 
 export default function Principal() {
   const navigation = useNavigation();
@@ -10,6 +11,8 @@ export default function Principal() {
     <SafeAreaView style={styles.container}>      
       <View style={styles.content}>
         <Text style={styles.contentText}>Bienvenido a la aplicación!</Text>
+        <Image style={styles.logo} source={require('../../assets/sld.jpg')} />
+        <Text style={styles.titleText}>Comienza con la administración de tu liga</Text>
       </View>
     </SafeAreaView>
   );
@@ -47,5 +50,11 @@ const styles = StyleSheet.create({
   contentText: {
     fontSize: 18,
     marginBottom: 20,
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#333',
   },
 });
