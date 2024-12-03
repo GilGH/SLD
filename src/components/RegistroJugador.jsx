@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, Alert, Image, TouchableOpacity } from 'react-native';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import app from '../utils/firebase';
-import * as ImagePicker from 'expo-image-picker'; // Importar ImagePicker
+import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,7 +11,9 @@ const db = getFirestore(app);
 export default function RegistroJugador({ route }) {
   const { ligaId, equipoId } = route.params; // Obtener ligaId y equipoId
   const [nombreJugador, setNombreJugador] = useState('');
-  const [imagenJugador, setImagenJugador] = useState(null); // Estado para la imagen
+  const [posicionJugador, setPosicionJugador] = useState(''); // Nuevo estado para posición
+  const [edadJugador, setEdadJugador] = useState(''); // Nuevo estado para edad
+  const [imagenJugador, setImagenJugador] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
 
@@ -24,7 +26,7 @@ export default function RegistroJugador({ route }) {
     });
 
     if (!result.canceled) {
-      setImagenJugador(result.assets[0].uri); // Guarda la URI seleccionada
+      setImagenJugador(result.assets[0].uri);
     } else {
       Alert.alert("Error", "No se seleccionó ninguna imagen.");
     }
@@ -32,22 +34,30 @@ export default function RegistroJugador({ route }) {
 
   // Función para registrar al jugador
   const handleRegistroJugador = async () => {
-    if (nombreJugador.trim() === '') {
-      Alert.alert("Error", "El nombre del jugador no puede estar vacío.");
+    if (nombreJugador.trim() === '' || posicionJugador.trim() === '' || edadJugador.trim() === '') {
+      Alert.alert("Error", "Todos los campos son obligatorios.");
+      return;
+    }
+
+    if (isNaN(edadJugador) || Number(edadJugador) <= 0) {
+      Alert.alert("Error", "La edad debe ser un número positivo.");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Registrar el jugador en Firestore
       await addDoc(collection(db, "ligas", ligaId, "equipos", equipoId, "jugadores"), {
         nombre: nombreJugador,
-        imagen: imagenJugador, // Guardar la URI de la imagen
-        fechaCreacion: new Date().toISOString(), // Guardar la fecha de creación
+        posicion: posicionJugador,
+        edad: Number(edadJugador), // Guardar edad como número
+        imagen: imagenJugador,
+        fechaCreacion: new Date().toISOString(),
       });
       Alert.alert("Éxito", "Jugador registrado correctamente.");
       setNombreJugador('');
+      setPosicionJugador('');
+      setEdadJugador('');
       setImagenJugador(null);
       navigation.goBack();
     } catch (error) {
@@ -71,6 +81,19 @@ export default function RegistroJugador({ route }) {
         placeholder="Nombre del Jugador"
         value={nombreJugador}
         onChangeText={setNombreJugador}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Posición del Jugador"
+        value={posicionJugador}
+        onChangeText={setPosicionJugador}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Edad del Jugador"
+        value={edadJugador}
+        onChangeText={setEdadJugador}
+        keyboardType="numeric"
       />
 
       {imagenJugador && (
@@ -129,4 +152,3 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-
