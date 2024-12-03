@@ -12,11 +12,15 @@ import Principal from './src/components/Principal';
 import CrearLiga from './src/components/CrearLiga';
 import VerLigas from './src/components/VerLigas';
 import DetalleLiga from './src/components/DetalleLiga';
+import DetalleLigaJugador from './src/components/DetalleLigaJugador';
 import RegistroEquipos from './src/components/RegistroEquipos';
 import DetalleEquipo from './src/components/DetalleEquipo';
+import DetalleEquipoJugador from './src/components/DetalleEquipoJugador';
 import RegistroJugador from './src/components/RegistroJugador';
 import DetalleJugador from './src/components/DetalleJugador';
+import DetalleJugadorJugador from './src/components/DetalleJugadorJugador';
 import EncuentrosForm from './src/components/EncuentrosForm';
+import EncuentrosFormJugador from './src/components/EncuentrosFormJugador';
 import GenerarEncuentro from './src/components/GenerarEncuentro';
 import VistaJugador from './src/components/VistaJugador';
 
@@ -97,10 +101,74 @@ export default function App() {
     </Drawer.Navigator>
   );
 
+  const CustomDrawerContentJugador = (props) => (
+    <DrawerContentScrollView {...props}>
+      <DrawerItem
+        label="Principal"
+        onPress={() => props.navigation.navigate('Principal')}
+      />
+      <DrawerItem
+        label="Ligas"
+        onPress={() => props.navigation.navigate('Ligas')}
+      />
+      <DrawerItem
+        label="Encuentros"
+        onPress={() => props.navigation.navigate('Encuentros')}
+      />
+      <DrawerItem
+        label="Cerrar sesión"
+        onPress={handleLogout}
+        labelStyle={{ color: 'red' }}
+      />
+    </DrawerContentScrollView>
+  );
+
+  const DrawerNavigatorJugador = () => (
+    <Drawer.Navigator drawerContent={(props) => <CustomDrawerContentJugador {...props} />}>
+      <Drawer.Screen name="Principal" component={Principal} />
+      <Drawer.Screen name="Ligas" component={VerLigas} />
+      <Drawer.Screen name="Encuentros" component={EncuentrosFormJugador} />
+    </Drawer.Navigator>
+  );
+
   // Stack para jugadores
   const PlayerStack = () => (
     <Stack.Navigator>
-      <Stack.Screen name="VistaJugador" component={VistaJugador} />
+      <Stack.Screen
+        name="Drawer"
+        component={DrawerNavigatorJugador}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Detalle de la Liga"
+        component={DetalleLigaJugador}
+        options={{
+          title: "Detalle de la Liga",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="DetalleEquipo"
+        component={DetalleEquipoJugador}
+        options={{
+          title: "Detalle del Equipo",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="DetalleJugador"
+        component={DetalleJugadorJugador}
+        options={{
+          title: "Detalle del Jugador",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
     </Stack.Navigator>
   );
 
