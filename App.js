@@ -15,6 +15,8 @@ import RegistroEquipos from './src/components/RegistroEquipos';
 import DetalleEquipo from './src/components/DetalleEquipo';
 import RegistroJugador from './src/components/RegistroJugador';
 import DetalleJugador from './src/components/DetalleJugador';
+import EncuentrosForm from './src/components/EncuentrosForm';
+import GenerarEncuentro from './src/components/GenerarEncuentro'; // Importar el nuevo formulario
 
 // Creación de navegadores
 const Stack = createStackNavigator();
@@ -33,14 +35,12 @@ export default function App() {
 
   if (user === undefined) return null;
 
-  // Función para manejar el cierre de sesión
   const handleLogout = () => {
     signOut(auth)
       .then(() => setUser(false))
       .catch((error) => console.error("Error al cerrar sesión", error));
   };
 
-  // Componente personalizado del Drawer
   const CustomDrawerContent = (props) => (
     <DrawerContentScrollView {...props}>
       <DrawerItem
@@ -56,6 +56,10 @@ export default function App() {
         onPress={() => props.navigation.navigate('Crear Liga')}
       />
       <DrawerItem
+        label="Encuentros"
+        onPress={() => props.navigation.navigate('Encuentros')}
+      />
+      <DrawerItem
         label="Cerrar sesión"
         onPress={handleLogout}
         labelStyle={{ color: 'red' }}
@@ -63,16 +67,15 @@ export default function App() {
     </DrawerContentScrollView>
   );
 
-  // Drawer Navigator
   const DrawerNavigator = () => (
     <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Principal" component={Principal} />
       <Drawer.Screen name="Ligas" component={VerLigas} />
       <Drawer.Screen name="Crear Liga" component={CrearLiga} />
+      <Drawer.Screen name="Encuentros" component={EncuentrosForm} />
     </Drawer.Navigator>
   );
 
-  // Stack Navigator con integración del Drawer
   const AppStack = () => (
     <Stack.Navigator>
       <Stack.Screen
@@ -125,6 +128,16 @@ export default function App() {
         component={RegistroEquipos}
         options={{
           title: "Registrar Equipos",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="GenerarEncuentro"
+        component={GenerarEncuentro} // Agregar la nueva pantalla
+        options={{
+          title: "Generar Encuentro",
           headerStyle: { backgroundColor: "#1E90FF" },
           headerTintColor: "#fff",
           headerTitleStyle: { fontWeight: "bold" },
