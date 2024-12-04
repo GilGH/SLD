@@ -3,15 +3,15 @@ import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert, Image } from
 import { MaterialIcons } from '@expo/vector-icons';
 import { getFirestore, collection, onSnapshot, doc, deleteDoc, getDoc } from 'firebase/firestore';
 import app from '../utils/firebase';
-
+ 
 const db = getFirestore(app);
-
+ 
 export default function DetalleEquipo({ route, navigation }) {
   const { ligaId, equipoId, nombreEquipo } = route.params;
   const [jugadores, setJugadores] = useState([]);
   const [logo, setLogo] = useState(null); // Estado para el logo del equipo
   const [isLoading, setIsLoading] = useState(true);
-
+ 
   useEffect(() => {
     // Obtener el logo del equipo
     const fetchEquipoData = async () => {
@@ -27,10 +27,10 @@ export default function DetalleEquipo({ route, navigation }) {
         console.error("Error al obtener el documento del equipo:", error);
       }
     };
-
+ 
     fetchEquipoData();
   }, [ligaId, equipoId]);
-
+ 
   useEffect(() => {
     // Listener en tiempo real para obtener los jugadores del equipo
     const unsubscribe = onSnapshot(collection(db, "ligas", ligaId, "equipos", equipoId, "jugadores"), (querySnapshot) => {
@@ -44,10 +44,10 @@ export default function DetalleEquipo({ route, navigation }) {
       console.error("Error al obtener jugadores:", error);
       setIsLoading(false);
     });
-
+ 
     return () => unsubscribe();
   }, [ligaId, equipoId]);
-
+ 
   const renderJugador = ({ item }) => (
     <TouchableOpacity
       style={styles.jugadorItem}
@@ -56,7 +56,7 @@ export default function DetalleEquipo({ route, navigation }) {
       <Text style={styles.jugadorNombre}>{item.nombre}</Text>
     </TouchableOpacity>
   );
-
+ 
   const confirmarEliminacion = () => {
     Alert.alert(
       "Confirmar eliminación",
@@ -67,7 +67,7 @@ export default function DetalleEquipo({ route, navigation }) {
       ]
     );
   };
-
+ 
   const eliminarEquipo = async () => {
     try {
       await deleteDoc(doc(db, "ligas", ligaId, "equipos", equipoId));
@@ -78,25 +78,32 @@ export default function DetalleEquipo({ route, navigation }) {
       Alert.alert("Error", "No se pudo eliminar el equipo. Inténtalo de nuevo.");
     }
   };
-
+ 
   return (
     <View style={styles.container}>
       {/* Botón para eliminar */}
       <TouchableOpacity style={styles.deleteButton} onPress={confirmarEliminacion}>
         <MaterialIcons name="delete" size={24} color="white" />
       </TouchableOpacity>
-
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => navigation.navigate("Editar Equipo", { ligaId, equipoId, nombreEquipo, logo })}
+      >
+        <MaterialIcons name="edit" size={24} color="white" />
+      </TouchableOpacity>
+ 
+ 
       {/* Imagen del logo del equipo */}
       {logo ? (
         <Image source={{ uri: logo }} style={styles.equipoImage} resizeMode="cover" />
       ) : (
         <Text>Cargando logo...</Text>
       )}
-
+ 
       {/* Información del equipo */}
       <Text style={styles.equipoTitle}>Equipo: {nombreEquipo}</Text>
       <Text style={styles.subtitle}>Jugadores:</Text>
-
+ 
       {isLoading ? (
         <Text>Cargando jugadores...</Text>
       ) : jugadores.length === 0 ? (
@@ -108,7 +115,7 @@ export default function DetalleEquipo({ route, navigation }) {
           keyExtractor={(item) => item.id}
         />
       )}
-
+ 
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => navigation.navigate("RegistroJugador", { ligaId, equipoId })}
@@ -118,7 +125,7 @@ export default function DetalleEquipo({ route, navigation }) {
     </View>
   );
 }
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -141,6 +148,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 40,
   },
+  editButton: {
+  position: "absolute",
+  top: 10,
+  right: 60,
+  backgroundColor: "#4CAF50",
+  borderRadius: 50,
+  padding: 10,
+  zIndex: 10,
+},
+ 
   equipoTitle: {
     fontSize: 22,
     fontWeight: "bold",
@@ -173,4 +190,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-

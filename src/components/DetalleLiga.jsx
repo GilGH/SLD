@@ -108,6 +108,14 @@ export default function DetalleLiga({ route, navigation }) {
         <MaterialIcons name="delete" size={24} color="white" />
       </TouchableOpacity>
 
+      {/* Botón para editar */}
+      <TouchableOpacity 
+        style={styles.editButton} 
+        onPress={() => navigation.navigate("Editar Liga", { ligaId, nombre, fechaCreacion, desc})}
+      >
+        <MaterialIcons name="edit" size={24} color="white" />
+      </TouchableOpacity>
+
       {/* Imagen del logo */}
       {logo ? (
         <Image source={{ uri: logo }} style={styles.ligaImage} resizeMode="cover" />
@@ -163,6 +171,15 @@ const styles = StyleSheet.create({
     padding: 10,
     zIndex: 10,
   },
+  editButton: {
+    position: "absolute",
+    top: 10,
+    right: 70,
+    backgroundColor: "#4CAF50", // Color verde para editar
+    borderRadius: 50,
+    padding: 10,
+    zIndex: 10,
+  },
   ligaImage: {
     width: "100%",
     height: 200,
@@ -212,3 +229,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+

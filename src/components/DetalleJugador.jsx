@@ -72,6 +72,14 @@ export default function DetalleJugador({ route, navigation }) {
                 <MaterialIcons name="delete" size={24} color="white" />
             </TouchableOpacity>
 
+            {/* Botón para editar */}
+            <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => navigation.navigate("Editar Jugador", { ligaId, equipoId, jugadorId, jugador })}
+            >
+                <MaterialIcons name="edit" size={24} color="white" />
+            </TouchableOpacity>
+
             {/* Imagen del jugador */}
             {imagen ? (
                 <Image source={{ uri: imagen }} style={styles.jugadorImage} resizeMode="cover" />
@@ -118,5 +126,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginVertical: 5,
     },
+    editButton: {
+        position: "absolute",
+        top: 10,
+        right: 60,
+        backgroundColor: "#4CAF50",
+        borderRadius: 50,
+        padding: 10,
+        zIndex: 10,
+      },
 });
 

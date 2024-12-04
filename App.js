@@ -23,6 +23,9 @@ import EncuentrosForm from './src/components/EncuentrosForm';
 import EncuentrosFormJugador from './src/components/EncuentrosFormJugador';
 import GenerarEncuentro from './src/components/GenerarEncuentro';
 import VistaJugador from './src/components/VistaJugador';
+import EditarLiga from './src/components/EditarLiga';
+import EditarEquipo from './src/components/EditarEquipo';
+import EditarJugador from './src/components/EditarJugador';
 
 // Creación de navegadores
 const Stack = createStackNavigator();
@@ -98,6 +101,9 @@ export default function App() {
       <Drawer.Screen name="Ligas" component={VerLigas} />
       <Drawer.Screen name="Crear Liga" component={CrearLiga} />
       <Drawer.Screen name="Encuentros" component={EncuentrosForm} />
+      <Drawer.Screen name="Editar Liga" component={EditarLiga} />
+      <Drawer.Screen name="Editar Equipo" component={EditarEquipo} />
+      <Drawer.Screen name="Editar Jugador" component={EditarJugador} />
     </Drawer.Navigator>
   );
 
@@ -235,6 +241,36 @@ export default function App() {
         component={GenerarEncuentro} // Agregar la nueva pantalla
         options={{
           title: "Generar Encuentro",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="Editar Liga"
+        component={EditarLiga} // Agregar la nueva pantalla
+        options={{
+          title: "Editar Liga",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="Editar Equipo"
+        component={EditarEquipo}
+        options={{
+          title: "Editar Equipo",
+          headerStyle: { backgroundColor: "#1E90FF" },
+          headerTintColor: "#fff",
+          headerTitleStyle: { fontWeight: "bold" },
+        }}
+      />
+      <Stack.Screen
+        name="Editar Jugador"
+        component={EditarJugador}
+        options={{
+          title: "Editar Jugador",
           headerStyle: { backgroundColor: "#1E90FF" },
           headerTintColor: "#fff",
           headerTitleStyle: { fontWeight: "bold" },
